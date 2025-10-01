@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Движение денежных средств</h2>
+
+<form method="get" class="mb-4">
+    <div class="row">
+        <div class="col-md-2">
+            <input type="date" name="date_from" class="form-control" placeholder="От" value="{{ request.GET.date_from }}">
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="date_to" class="form-control" placeholder="До" value="{{ request.GET.date_to }}">
+        </div>
+        <div class="col-md-2">
+            <select name="status" class="form-select">
+                <option value="">Статус</option>
+                {% for status in statuses %}
+                    <option value="{{ status.id }}" {% if request.GET.status == status.id|stringformat:"s" %}selected{% endif %}>{{ status.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="type" class="form-select">
+                <option value="">Тип</option>
+                {% for t in types %}
+                    <option value="{{ t.id }}" {% if request.GET.type == t.id|stringformat:"s" %}selected{% endif %}>{{ t.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="category" class="form-select">
+                <option value="">Категория</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="subcategory" class="form-select">
+                <option value="">Подкатегория</option>
+                {% for sub in subcategories %}
+                    <option value="{{ sub.id }}" {% if request.GET.subcategory == sub.id|stringformat:"s" %}selected{% endif %}>{{ sub.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Фильтровать</button>
+    <a href="{% url 'dds_create' %}" class="btn btn-success mt-2">Добавить запись</a>
+    <a href="{% url 'manage_refs' %}" class="btn btn-secondary mt-2">Управление справочниками</a>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                <a href="?{% for key, value in request.GET.items %}{% if key != 'sort' %}{{ key }}={{ value }}&{% endif %}{% endfor %}sort={% if current_sort == 'date' %}-date{% elif current_sort == '-date' %}date{% else %}date{% endif %}">
+                    Дата
+                    {% if current_sort == 'date' %} ↑
+                    {% elif current_sort == '-date' %} ↓
+                    {% endif %}
+                </a>
+            </th>
+            <th>
+                <a href="?{% for key, value in request.GET.items %}{% if key != 'sort' %}{{ key }}={{ value }}&{% endif %}{% endfor %}sort={% if current_sort == 'status__name' %}-status__name{% else %}status__name{% endif %}">
+                    Статус
+                    {% if current_sort == 'status__name' %} ↑
+                    {% elif current_sort == '-status__name' %} ↓
+                    {% endif %}
+                </a>
+            </th>
+            <th>
+                <a href="?{% for key, value in request.GET.items %}{% if key != 'sort' %}{{ key }}={{ value }}&{% endif %}{% endfor %}sort={% if current_sort == 'type__name' %}-type__name{% else %}type__name{% endif %}">
+                    Тип
+                    {% if current_sort == 'type__name' %} ↑
+                    {% elif current_sort == '-type__name' %} ↓
+                    {% endif %}
+                </a>
+            </th>
+            <th>
+                <a href="?{% for key, value in request.GET.items %}{% if key != 'sort' %}{{ key }}={{ value }}&{% endif %}{% endfor %}sort={% if current_sort == 'category' %}-category{% else %}category{% endif %}">
+                    Категория
+                    {% if current_sort == 'category' %} ↑
+                    {% elif current_sort == '-category' %} ↓
+                    {% endif %}
+                </a>
+            <th>
+                <a href="?{% for key, value in request.GET.items %}{% if key != 'sort' %}{{ key }}={{ value }}&{% endif %}{% endfor %}sort={% if current_sort == 'subcategory' %}-subcategory{% else %}subcategory{% endif %}">
+                    Подкатегория
+                    {% if current_sort == 'subcategory' %} ↑
+                    {% elif current_sort == '-subcategory' %} ↓
+                    {% endif %}
+                </a>
+            <th>
+                <a href="?{% for key, value in request.GET.items %}{% if key != 'sort' %}{{ key }}={{ value }}&{% endif %}{% endfor %}sort={% if current_sort == 'amount' %}-amount{% else %}amount{% endif %}">
+                    Сумма
+                    {% if current_sort == 'amount' %} ↑
+                    {% elif current_sort == '-amount' %} ↓
+                    {% endif %}
+                </a>
+            </th>
+            <th>Комментарий</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in records %}
+        <tr>
+            <td>{{ record.date }}</td>
+            <td>{{ record.status.name }}</td>
+            <td>{{ record.type.name }}</td>
+            <td>{{ record.category.name }}</td>
+            <td>{{ record.subcategory.name }}</td>
+            <td>{{ record.amount }}</td>
+            <td>{{ record.comment|default:"" }}</td>
+            <td>
+                <a href="{% url 'dds_update' record.pk %}" class="btn btn-sm btn-outline-primary">Изменить</a>
+                <a href="{% url 'dds_delete' record.pk %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8">Нет записей</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

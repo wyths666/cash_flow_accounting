@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{% if object %}Редактировать{% else %}Создать{% endif %} запись</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="{% url 'dds_list' %}" class="btn btn-sm btn-danger">Отмена</a>
+</form>
+{% endblock %}
+
+{% block js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const typeSelect = document.querySelector('[name="type"]');
+    const categorySelect = document.querySelector('[name="category"]');
+    const subcategorySelect = document.querySelector('[name="subcategory"]');
+
+    function updateCategoryOptions() {
+        const typeId = typeSelect.value;
+        if (typeId) {
+            fetch(`/ajax/load-categories/?type_id=${typeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    categorySelect.innerHTML = '<option value="">Выберите категорию</option>';
+                    subcategorySelect.innerHTML = '<option value="">Выберите подкатегорию</option>';
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.textContent = item.name;
+                        categorySelect.appendChild(option);
+                    });
+                });
+        } else {
+            categorySelect.innerHTML = '<option value="">Выберите категорию</option>';
+            subcategorySelect.innerHTML = '<option value="">Выберите подкатегорию</option>';
+        }
+    }
+
+    function updateSubcategoryOptions() {
+        const categoryId = categorySelect.value;
+        if (categoryId) {
+            fetch(`/ajax/load-subcategories/?category_id=${categoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    subcategorySelect.innerHTML = '<option value="">Выберите подкатегорию</option>';
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.textContent = item.name;
+                        subcategorySelect.appendChild(option);
+                    });
+                });
+        } else {
+            subcategorySelect.innerHTML = '<option value="">Выберите подкатегорию</option>';
+        }
+    }
+
+    typeSelect.addEventListener('change', updateCategoryOptions);
+    categorySelect.addEventListener('change', updateSubcategoryOptions);
+});
+</script>
+{% endblock %}

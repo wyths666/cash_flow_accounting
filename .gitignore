@@ -1,0 +1,19 @@
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+*.so
+.coverage
+.pytest_cache/
+.venv/
+.idea/
+env/
+venv/
+
+# Django
+db.sqlite3
+*.log
+local_settings.py
+

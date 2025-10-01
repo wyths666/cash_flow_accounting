@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Управление справочниками</h2>
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+<!-- Форма добавления статуса -->
+<div class="mb-4">
+    <h4>Статусы</h4>
+    <form method="post">
+        {% csrf_token %}
+        {{ status_form.as_p }}
+        <input type="hidden" name="entity_type" value="status">
+        <input type="hidden" name="action" value="add">
+        <button type="submit" class="btn btn-success">Добавить статус</button>
+    </form>
+
+    <ul class="list-group mt-2">
+        {% for status in statuses %}
+        <li class="list-group-item">
+            {{ status.name }}
+            <form method="post" style="display:inline;" onsubmit="return confirm('Удалить?');">
+                {% csrf_token %}
+                <input type="hidden" name="entity_type" value="status">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="obj_id" value="{{ status.id }}">
+                <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Форма добавления типа -->
+<div class="mb-4">
+    <h4>Типы</h4>
+    <form method="post">
+        {% csrf_token %}
+        {{ type_form.as_p }}
+        <input type="hidden" name="entity_type" value="type">
+        <input type="hidden" name="action" value="add">
+        <button type="submit" class="btn btn-success">Добавить тип</button>
+    </form>
+
+    <ul class="list-group mt-2">
+        {% for type in types %}
+        <li class="list-group-item">
+            {{ type.name }}
+            <form method="post" style="display:inline;" onsubmit="return confirm('Удалить?');">
+                {% csrf_token %}
+                <input type="hidden" name="entity_type" value="type">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="obj_id" value="{{ type.id }}">
+                <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<!-- Форма добавления категории -->
+<div class="mb-4">
+    <h4>Категории</h4>
+    <form method="post">
+        {% csrf_token %}
+        {{ category_form.as_p }}
+        <input type="hidden" name="entity_type" value="category">
+        <input type="hidden" name="action" value="add">
+        <button type="submit" class="btn btn-success">Добавить категорию</button>
+    </form>
+
+    <ul class="list-group mt-2">
+        {% for category in categories %}
+        <li class="list-group-item">
+            {{ category.name }} ({{ category.type.name }})
+            <form method="post" style="display:inline;" onsubmit="return confirm('Удалить?');">
+                {% csrf_token %}
+                <input type="hidden" name="entity_type" value="category">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="obj_id" value="{{ category.id }}">
+                <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Форма добавления подкатегории -->
+<div class="mb-4">
+    <h4>Подкатегории</h4>
+    <form method="post">
+        {% csrf_token %}
+        {{ subcategory_form.as_p }}
+        <input type="hidden" name="entity_type" value="subcategory">
+        <input type="hidden" name="action" value="add">
+        <button type="submit" class="btn btn-success">Добавить подкатегорию</button>
+    </form>
+
+    <ul class="list-group mt-2">
+        {% for subcategory in subcategories %}
+        <li class="list-group-item">
+            {{ subcategory.name }} ({{ subcategory.category.name }})
+            <form method="post" style="display:inline;" onsubmit="return confirm('Удалить?');">
+                {% csrf_token %}
+                <input type="hidden" name="entity_type" value="subcategory">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="obj_id" value="{{ subcategory.id }}">
+                <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<a href="{% url 'dds_list' %}" class="btn btn-primary">↩️ Назад</a>
+
+{% endblock %}
